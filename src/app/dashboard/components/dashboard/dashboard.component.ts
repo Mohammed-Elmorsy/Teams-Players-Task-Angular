@@ -124,10 +124,13 @@ export class DashboardComponent implements OnInit {
         console.log('res2', res);
         //alert('updated successfully');
         let teamIndex = this.teams.findIndex(team => team.id === this.playerTeamId);
-        let playerIndex = this.teams[teamIndex].players?.findIndex(player => player.id === this.playerForm.value.id);
-/*         if (typeof playerIndex !== "undefined" && typeof teamIndex !== "undefined"){
-          this.teams[teamIndex].players[playerIndex] = this.playerForm.value;
-        } */
+        if (teamIndex > -1) {
+          let playerIndex = this.teams[teamIndex].players?.findIndex(player => player.id === this.playerForm.value.id);
+          if (playerIndex > -1){
+            this.teams[teamIndex].players[playerIndex] = this.playerForm.value;
+          }
+        }
+
       
         this.messageService.add({key: 'player', severity:'success', summary: 'Updated', detail: 'Successfully updated player info'});
         this.displayEditPlayer = false;
