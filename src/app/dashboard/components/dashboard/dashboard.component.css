@@ -1,0 +1,8 @@
+i:hover {
+    cursor: pointer;
+}
+
+.custom-height {
+    height: 100px !important;
+    width: 100px !important;
+}

@@ -1,0 +1,125 @@
+<div class="p-6 pt-3">
+    <div class="flex justify-content-between flex-wrap mb-5">
+        <button pButton type="button" icon="pi pi-plus" iconPos="left" label="Add a Team" class="flex align-items-center justify-content-center"></button>
+        <button pButton 
+            type="button" icon="pi pi-sign-out" label="Logout" 
+            class="flex align-items-center justify-content-center p-button-danger"
+            (click)="logout()">
+        </button>
+    </div>
+    <p-accordion>
+        <p-accordionTab *ngFor="let team of teams; trackBy:trackById" header="{{team.name}}">
+            <ng-template pTemplate="content">
+                <div class="flex justify-content-between flex-wrap">
+                    <div class="flex align-items-center justify-content-center">Country: &nbsp;<p-tag styleClass="p-mr-2" severity="success" value="{{team.country}}"></p-tag></div>
+                    <div class="flex align-items-center justify-content-center">CoachName: &nbsp;<p-tag styleClass="p-mr-2" severity="success" value="{{team.coachName}}"></p-tag></div>
+                    <div class="flex align-items-center justify-content-center">Foundation Date: &nbsp;<p-tag styleClass="p-mr-2" severity="success" value="{{team.foundationDate | date:'M/d/y'}}"></p-tag></div>
+                    <div class="flex align-items-center justify-content-center" *ngIf="isAdmin">
+                        <i class="pi pi-user-edit" style="font-size: 1.5rem" (click)="showTeamEditDialog(team)"></i>
+                        <i class="pi pi-times ml-2" style="font-size: 1.5rem"></i>
+                    </div>
+    <!--                 <div><img [src]="logoImageName" alt="logo"></div>
+                </div>
+                
+
+ -->            
+                </div>
+                <h3>Players :</h3>
+                <p-accordion>
+                    <p-accordionTab *ngFor="let player of team?.players; trackBy:trackById" header="{{player.name}}">
+                        <ng-template pTemplate="content">
+                            <div class="flex justify-content-between flex-wrap">
+                                <div class="flex align-items-center justify-content-center">Name: &nbsp;<p-tag styleClass="p-mr-2" value="{{player.name}}"></p-tag></div>
+                                <div class="flex align-items-center justify-content-center">Nationality: &nbsp; <p-tag styleClass="p-mr-2" value="{{player.nationality}}"></p-tag></div>
+                                <div class="flex align-items-center justify-content-center">Date of Birth: &nbsp; <p-tag styleClass="p-mr-2" value="{{player.dateOfBirth | date:'M/d/y'}}"></p-tag></div>
+                                <div class="flex align-items-center justify-content-center" *ngIf="isAdmin">
+                                    <i class="pi pi-user-edit" style="font-size: 1.5rem" (click)="showPlayerEditDialog(player, team.id)"></i>
+                                    <i class="pi pi-times ml-2" style="font-size: 1.5rem" (click)="confirmDeletePlayer(player.id)"></i>
+                                </div>
+
+
+                <!--                 <div><img [src]="logoImageName" alt="logo"></div>
+                            </div>
+                            
+            
+             -->            
+                            </div>
+                        </ng-template>
+                    </p-accordionTab>
+                </p-accordion>
+
+            </ng-template>
+        </p-accordionTab>
+    </p-accordion>
+</div>
+<!-- team edit dialog -->
+<p-dialog header="Edit Team" [(visible)]="displayEditTeam" [contentStyle]="{'overflow': 'visible'}" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+    <div class="card" *ngIf="displayEditTeam" [formGroup]="teamForm" >
+        <div class="field">
+            <label for="name">Name</label>
+            <input id="name" type="text" class="inputfield w-full" pInputText formControlName="name">
+            <!-- Validation -->
+            <div *ngIf="teamName.invalid && (teamName.dirty || teamName.touched)" class="flex flex-column flex-wrap mt-2">     
+                <div *ngIf="teamName.errors?.required" class="flex">
+                    <p-message severity="error" text="Team Name is required."></p-message>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label for="country">Country</label>
+            <input id="country" type="text" class="inputfield w-full" pInputText formControlName="country">
+        </div>
+        <div class="field">
+            <label for="foundationDate">Foundation Date</label>
+            <input id="foundationDate" type="date" class="inputfield w-full" pInputText formControlName="foundationDate">
+        </div>
+        <div class="field">
+            <label for="coachName">Coach Name</label>
+            <input id="coachName" type="text" class="inputfield w-full" pInputText formControlName="coachName">
+        </div>
+        <div class="flex justify-content-center flex-wrap field">
+            <button pButton type="button" 
+                class="flex align-items-center justify-content-center p-button-raised p-button-rounded"
+                (click)="updateTeam()" [disabled]="teamForm.invalid">
+                Update Team Info
+            </button>
+        </div>
+    </div>
+</p-dialog>
+<!-- player edit dialog -->
+<p-dialog header="Edit Player" [(visible)]="displayEditPlayer" [contentStyle]="{'overflow': 'visible'}" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+    <div class="card" *ngIf="displayEditPlayer" [formGroup]="playerForm" >
+        <div class="field">
+            <label for="name">Name</label>
+            <input id="name" type="text" class="inputfield w-full" pInputText formControlName="name">
+            <!-- Validation -->
+            <div *ngIf="playerName.invalid && (playerName.dirty || playerName.touched)" class="flex flex-column flex-wrap mt-2">     
+                <div *ngIf="playerName.errors?.required" class="flex">
+                    <p-message severity="error" text="Player Name is required."></p-message>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label for="nationality">Nationality</label>
+            <input id="nationality" type="text" class="inputfield w-full" pInputText formControlName="nationality">
+        </div>
+        <div class="field">
+            <label for="dateOfBirth">Date Of Birth</label>
+            <input id="dateOfBirth" type="date" class="inputfield w-full" pInputText formControlName="dateOfBirth">
+        </div>
+        <div class="flex justify-content-center flex-wrap field">
+            <button pButton type="button" 
+                class="flex align-items-center justify-content-center p-button-raised p-button-rounded"
+                (click)="updatePlayer()" [disabled]="playerForm.invalid">
+                Update Player Info
+            </button>
+        </div>
+    </div>
+</p-dialog>
+
+
+<p-toast key="team" position="top-center"></p-toast>
+<p-toast key="player" position="top-center"></p-toast>
+
+<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"></p-confirmDialog>
+<p-messages [value]="msgs"></p-messages>

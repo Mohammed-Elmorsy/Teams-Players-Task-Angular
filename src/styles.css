@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url(assets/stadium.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: -apple-system, BlinkMacSystemFont, “Segoe UI”, Roboto, Helvetica, Arial, sans-serif, “Apple Color Emoji”, “Segoe UI Emoji”, “Segoe UI Symbol”;
+}
+
+.form {
+  padding: 30px;
+  border-radius: 10px;
+  border: 2px groove wheat;
+  background-color: rgb(40, 107, 74);
+  
+}
+
+.form label {
+  color: rgb(152, 189, 155) !important;
+}

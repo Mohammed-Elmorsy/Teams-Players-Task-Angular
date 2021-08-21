@@ -1,0 +1,60 @@
+<div class="flex flex-column justify-content-center align-items-center overflow-auto" style="height: 100vh;">
+
+  <div [formGroup]="registerForm" class="flex flex-column align-items-center justify-content-center form">
+    <div class="flex flex-column p-float-label">
+      <input id="userName-input" type="text" pInputText formControlName="userName"> 
+      <label for="userName-input">Username</label>
+      <!-- Validation -->
+      <div *ngIf="userName.invalid && (userName.dirty || userName.touched)" class="flex flex-column flex-wrap mt-2">     
+        <div *ngIf="userName.errors?.required" class="flex">
+          <p-message severity="error" text="username is required."></p-message>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex flex-column p-float-label mt-5 ">
+        <input id="password-input" type="password" pInputText formControlName="password"> 
+        <label for="password-input">Password</label>
+
+        <!-- Validation -->
+        <div *ngIf="password.invalid && (password.dirty || password.touched)" class="flex flex-wrap mt-2">
+        
+          <div *ngIf="password.errors?.required" class="flex">
+            <p-message severity="error" text="password is required."></p-message>
+          </div>
+        </div>  
+    </div>
+
+    <div class="flex flex-column p-float-label mt-5 ">
+      <input id="firstName-input" type="text" pInputText formControlName="firstName"> 
+      <label for="firstName-input">First Name</label>
+    </div>
+
+    <div class="flex flex-column p-float-label mt-5 ">
+      <input id="lastName-input" type="text" pInputText formControlName="lastName"> 
+      <label for="lastName-input">Last Name</label>
+    </div>
+
+    <div class="flex flex-column p-float-label mt-5 ">
+      <input id="email-input" type="email" pInputText formControlName="email"> 
+      <label for="email-input">Email</label>
+
+      <!-- Validation -->
+      <div *ngIf="email.invalid && (email.dirty || email.touched)" class="flex flex-wrap mt-2">
+        <div *ngIf="email.errors?.required" class="flex">
+          <p-message severity="error" text="email is required."></p-message>
+        </div>
+      </div>  
+    </div>
+
+    <div class="flex mt-5">
+      <button #registerBtn [disabled]="registerForm.invalid" pButton type="button" label="Register" (click)="register()"></button>
+    </div>
+    <div class="flex mt-5">
+      Do you have an acount ? &nbsp; <a routerLink="/auth/login">Login</a>
+    </div>
+  </div>
+  
+</div>
+
+  
