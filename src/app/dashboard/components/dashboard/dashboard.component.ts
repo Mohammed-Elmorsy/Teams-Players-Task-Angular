@@ -131,7 +131,6 @@ export class DashboardComponent implements OnInit {
           }
         }
 
-      
         this.messageService.add({key: 'player', severity:'success', summary: 'Updated', detail: 'Successfully updated player info'});
         this.displayEditPlayer = false;
       },
@@ -142,13 +141,23 @@ export class DashboardComponent implements OnInit {
   }
 
 
-  confirmDeletePlayer(playerId: any) {
+  confirmDeletePlayer(playerId: number, teamId: number) {
     this.confirmationService.confirm({
         message: 'Are you sure you want to delete?',
         header: 'Delete Confirmation',
         icon: 'pi pi-danger-circle',
         accept: () => {
             this.playerService.deletePlayer(playerId).subscribe( res =>{
+              let teamIndex = this.teams.findIndex(team => team.id === teamId);
+              if (teamIndex > -1) {
+                console.log('teamIndex', teamIndex);
+
+                let playerIndex = this.teams[teamIndex].players?.findIndex(player => player.id === playerId);
+                if (playerIndex > -1){
+                  console.log('playerIndex', playerIndex);
+                  this.teams[teamIndex].players.splice(playerIndex, 1);
+                }
+              }
               this.msgs = [{severity: 'info', summary:'Confirmed', detail:'Deleted'}];
             });
         },

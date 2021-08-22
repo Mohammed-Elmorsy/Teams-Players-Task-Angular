@@ -34,7 +34,7 @@
                                 <div class="flex align-items-center justify-content-center">Date of Birth: &nbsp; <p-tag styleClass="p-mr-2" value="{{player.dateOfBirth | date:'M/d/y'}}"></p-tag></div>
                                 <div class="flex align-items-center justify-content-center" *ngIf="isAdmin">
                                     <i class="pi pi-user-edit" style="font-size: 1.5rem" (click)="showPlayerEditDialog(player, team.id)"></i>
-                                    <i class="pi pi-times ml-2" style="font-size: 1.5rem" (click)="confirmDeletePlayer(player.id)"></i>
+                                    <i class="pi pi-times ml-2" style="font-size: 1.5rem" (click)="confirmDeletePlayer(player.id, team.id)"></i>
                                 </div>
 
 
@@ -122,4 +122,4 @@
 <p-toast key="player" position="top-center"></p-toast>
 
 <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"></p-confirmDialog>
-<p-messages [value]="msgs"></p-messages>
+<p-messages [value]="msgs" [style]="{width: '50vw'}"></p-messages>
