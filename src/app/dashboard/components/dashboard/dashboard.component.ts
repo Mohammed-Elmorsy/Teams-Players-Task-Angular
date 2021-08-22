@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ConfirmationService, Message, MessageService, PrimeNGConfig } from 'primeng/api';
+import { ConfirmationService, MenuItem, Message, MessageService, PrimeNGConfig } from 'primeng/api';
 import { Player } from 'src/app/models/player';
 import { Team } from 'src/app/models/team';
 import { AuthService } from 'src/app/services/auth.service';
@@ -26,11 +26,13 @@ export class DashboardComponent implements OnInit {
    }
   // ----------------------------------------------------- fields ----------------------------------------------------
   teams: Team[] = [];
+  items: MenuItem[];
   role: any;
   isAdmin: boolean = false;
   msgs: Message[] = [];
   displayEditTeam: boolean = false;
   displayEditPlayer: boolean = false;
+  displayAddTeamWithPlayers: boolean = false;
   playerTeamId: number = -1;
   teamForm: FormGroup;  
   playerForm: FormGroup; 
@@ -79,6 +81,19 @@ export class DashboardComponent implements OnInit {
     this.createPlayerForm(player);
   }
 
+  showAddTeamWithPlayersDialog(){
+    this.displayAddTeamWithPlayers = true;
+    this.createTeamWithPlayersStepper();
+  }
+
+  nextPage() {
+        this.router.navigate(['steps/players']);
+  }
+  prevPage() {
+    this.router.navigate(['steps/team']);
+}
+
+
   createTeamForm(team: Team) {
     this.teamForm = this.fb.group({
       id : [team.id],
@@ -98,6 +113,18 @@ export class DashboardComponent implements OnInit {
       dateOfBirth: [player.dateOfBirth],
       imageName: ['placeholder.png']
     })
+  }
+
+  createTeamWithPlayersStepper() {
+      this.items = [{
+          label: 'Team',
+          routerLink: 'team'
+      },
+      {
+          label: 'Players',
+          routerLink: 'players'
+      },
+    ];
   }
 
   updateTeam() {
