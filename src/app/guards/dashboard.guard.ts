@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { map, catchError } from 'rxjs/operators';
 
@@ -20,6 +20,7 @@ export class DashboardGuard implements CanActivate {
     console.log('role', role);
 
     if (this.auth.isLoggedIn() && (role === 'User' || role === 'Admin')) {
+      let canAccess = new Subject<boolean>();
       return this.auth.validateToken().pipe(
         map(response => {
           if(response){
@@ -27,21 +28,17 @@ export class DashboardGuard implements CanActivate {
             return true; 
           }              
           else {
-              throw 'error';
+              return false;
           }
         }),
-        catchError(err => {
-          console.log('invalid token '+ err);
-          this.auth.logout().subscribe(res => {
-            localStorage.removeItem('token');
-            this.router.navigate(['/login']);
-          })
-          throw 'error';
-          
-        }),
+        catchError(() => {
+          localStorage.removeItem('token');
+          alert('A problem happened while trying to login please try to login again or call the technical support');
+          this.router.navigate(['/auth/login']);
+          canAccess.next(false);
+          return canAccess.asObservable();
+        })
       )
-      return false;
-
     }
     else {
       this.router.navigate(['auth/login']);
