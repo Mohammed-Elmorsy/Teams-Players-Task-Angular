@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfirmationService, MenuItem, Message, MessageService, PrimeNGConfig } from 'primeng/api';
 import { Player } from 'src/app/models/player';
@@ -36,12 +36,22 @@ export class DashboardComponent implements OnInit {
   playerTeamId: number = -1;
   teamForm: FormGroup;  
   playerForm: FormGroup; 
+  teamWithPlayersForm: FormGroup;
 
-  get teamName() {
+  get teamName(): FormControl {
       return this.teamForm.get('name') as FormControl;
   }
-  get playerName() {
+  get playerName(): FormControl{
     return this.playerForm.get('name') as FormControl; 
+  }
+  get nameOfTeam(): FormControl{
+    return this.teamWithPlayersForm.get('teamName') as FormControl;
+  }
+  get nameOfPlayer(): FormControl {
+    return this.teamWithPlayersForm.get('playerName') as FormControl;
+  }
+  get teamPlayers(): FormArray{
+    return this.teamWithPlayersForm.get('players') as FormArray;
   }
   // ----------------------------------------------- life cycle hooks ------------------------------------------------
   ngOnInit(): void {
@@ -83,16 +93,8 @@ export class DashboardComponent implements OnInit {
 
   showAddTeamWithPlayersDialog(){
     this.displayAddTeamWithPlayers = true;
-    this.createTeamWithPlayersStepper();
+    this.createTeamWithPlayersForm();
   }
-
-  nextPage() {
-        this.router.navigate(['steps/players']);
-  }
-  prevPage() {
-    this.router.navigate(['steps/team']);
-}
-
 
   createTeamForm(team: Team) {
     this.teamForm = this.fb.group({
@@ -115,16 +117,47 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-  createTeamWithPlayersStepper() {
-      this.items = [{
-          label: 'Team',
-          routerLink: 'team'
+  makePlayerForm(): FormGroup {
+    return this.playerForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      nationality: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      dateOfBirth: [''],
+      imageName: ['']
+    })
+  }
+
+  createTeamWithPlayersForm() {
+    this.teamWithPlayersForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      country: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      foundationDate: [''],
+      coachName: [''],
+      logoImageName: ['placeholder.png'],
+      players : this.fb.array([
+        this.makePlayerForm()
+      ])
+
+    })
+  }
+
+  addNewPlayer() {
+    this.teamPlayers.push(this.makePlayerForm());
+  }
+
+  removePlayer(i) {
+    this.teamPlayers.removeAt(i);
+  }
+
+  addTeam() {
+    console.log('teamWithPlayersForm', this.teamWithPlayersForm.value);
+    this.teamsService.addTeam(this.teamWithPlayersForm.value).subscribe(
+      res => {
+        console.log('res succeeded', res);
       },
-      {
-          label: 'Players',
-          routerLink: 'players'
-      },
-    ];
+      err => {
+        console.log('errrrr', err);
+      }
+    )
   }
 
   updateTeam() {
@@ -192,6 +225,8 @@ export class DashboardComponent implements OnInit {
             this.msgs = [{severity:'info', summary:'Rejected', detail:'Error on delete'}];
         }
     });
-}
+  }
+
+  // --------------------------------------- UI Methods -----------------------------------------------
 
 }

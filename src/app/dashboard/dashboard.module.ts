@@ -17,6 +17,8 @@ import { RippleModule } from 'primeng/ripple';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { StepsModule } from 'primeng/steps';
 import { CardModule } from 'primeng/card';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+
 
 
 
@@ -43,7 +45,8 @@ import { CardModule } from 'primeng/card';
     RippleModule,
     ConfirmDialogModule,
     StepsModule,
-    CardModule
+    CardModule,
+    ScrollPanelModule
 
   ]
 })

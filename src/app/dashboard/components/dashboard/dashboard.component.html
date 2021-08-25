@@ -122,8 +122,75 @@
 
 <!-- add team with players dialog -->
 <p-dialog header="Add Team" [(visible)]="displayAddTeamWithPlayers" [contentStyle]="{'overflow': 'visible'}" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+    <p-scrollPanel [style]="{width: '100%', height: '80vh'}">
+        <div class="card" *ngIf="displayAddTeamWithPlayers" [formGroup]="teamWithPlayersForm" >
+            <div class="field">
+                <label for="teamName">Team Name</label>
+                <input id="teamName" type="text" class="inputfield w-full" pInputText formControlName="name">
+                <!-- Validation -->
+                <div *ngIf="nameOfTeam?.invalid && (nameOfTeam?.dirty || nameOfTeam?.touched)" class="flex flex-column flex-wrap mt-2">     
+                    <div *ngIf="nameOfTeam?.errors?.required" class="flex">
+                        <p-message severity="error" text="Team Name is required."></p-message>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label for="country">Country</label>
+                <input id="country" type="text" class="inputfield w-full" pInputText formControlName="country">
+            </div>
+            <div class="field">
+                <label for="foundationDate">Foundation Date</label>
+                <input id="foundationDate" type="date" class="inputfield w-full" pInputText formControlName="foundationDate">
+            </div>
+            <div class="field">
+                <label for="coachName">Coach Name</label>
+                <input id="coachName" type="text" class="inputfield w-full" pInputText formControlName="coachName">
+            </div>
+            <h3>Players :</h3>
+            <ng-container formArrayName="players">
+                <div *ngFor="let player of teamPlayers.controls; let i = index"> 
+                    <div class="card" [formGroup]="playerForm" >
+                        <div class="field">
+                            <label for="name">Name</label>
+                            <input id="name" type="text" class="inputfield w-full" pInputText formControlName="name">
+                            <!-- Validation -->
+                            <div *ngIf="playerName.invalid && (playerName.dirty || playerName.touched)" class="flex flex-column flex-wrap mt-2">     
+                                <div *ngIf="playerName.errors?.required" class="flex">
+                                    <p-message severity="error" text="Player Name is required."></p-message>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="nationality">Nationality</label>
+                            <input id="nationality" type="text" class="inputfield w-full" pInputText formControlName="nationality">
+                        </div>
+                        <div class="field">
+                            <label for="dateOfBirth">Date Of Birth</label>
+                            <input id="dateOfBirth" type="date" class="inputfield w-full" pInputText formControlName="dateOfBirth">
+                        </div>
+                        <div class="field flex justify-content-end flex-wrap">
+                            <i class="pi pi-plus-circle p-2" style="font-size: 1.5rem" (click)="addNewPlayer()"></i>
+                            <i class="pi pi-minus-circle p-2" style="font-size: 1.5rem" (click)="removePlayer(i)"></i>
+                        </div>
 
+                    </div>
+    
+                </div>
+    
+    
+            </ng-container>
+            <div class="flex justify-content-center flex-wrap field">
+                <button pButton type="button" 
+                    class="flex align-items-center justify-content-center p-button-raised p-button-rounded"
+                    (click)="addTeam()">
+                    Add Team
+                </button>
+            </div>
+        </div>
+    </p-scrollPanel>
 </p-dialog>
+
+
 
 
 <p-toast key="team" position="top-center"></p-toast>
