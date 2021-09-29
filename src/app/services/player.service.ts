@@ -17,4 +17,8 @@ export class PlayerService {
   deletePlayer(playerId: any) {
     return this.http.delete(`${environment.baseURL}/players/${playerId}`);
   }
+
+  addPlayers(players: Player[]) {
+    return this.http.post<Player[]>(`${environment.baseURL}/players`, players);
+  }
 }

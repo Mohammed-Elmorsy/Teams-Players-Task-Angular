@@ -33,10 +33,13 @@ export class DashboardComponent implements OnInit {
   displayEditTeam: boolean = false;
   displayEditPlayer: boolean = false;
   displayAddTeamWithPlayers: boolean = false;
+  displayAddPlayers: boolean = false;
   playerTeamId: number = -1;
   teamForm: FormGroup;  
-  playerForm: FormGroup; 
+  playerForm: FormGroup;
+  playersForm: FormGroup;
   teamWithPlayersForm: FormGroup;
+  currentTeamId: number;
 
   get teamName(): FormControl {
       return this.teamForm.get('name') as FormControl;
@@ -52,6 +55,9 @@ export class DashboardComponent implements OnInit {
   }
   get teamPlayers(): FormArray{
     return this.teamWithPlayersForm.get('players') as FormArray;
+  }
+  get players(): FormArray{
+    return this.playersForm.get('players') as FormArray;
   }
   // ----------------------------------------------- life cycle hooks ------------------------------------------------
   ngOnInit(): void {
@@ -96,6 +102,12 @@ export class DashboardComponent implements OnInit {
     this.createTeamWithPlayersForm();
   }
 
+  showAddPlayersDialog(teamId: number) {
+    this.displayAddPlayers = true;
+    this.createPlayersForm();
+    this.currentTeamId = teamId;
+  }
+
   createTeamForm(team: Team) {
     this.teamForm = this.fb.group({
       id : [team.id],
@@ -113,7 +125,8 @@ export class DashboardComponent implements OnInit {
       name: [player.name, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       nationality: [player.nationality, [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       dateOfBirth: [player.dateOfBirth],
-      imageName: ['placeholder.png']
+      imageName: ['placeholder.png'],
+      teamId: [this.playerTeamId]
     })
   }
 
@@ -140,12 +153,26 @@ export class DashboardComponent implements OnInit {
     })
   }
 
+  createPlayersForm() {
+    this.playersForm = this.fb.group({
+      players : this.fb.array([
+        this.makePlayerForm()
+      ])
+    })
+  }
+
   addNewPlayer() {
-    this.teamPlayers.push(this.makePlayerForm());
+    if (this.displayAddTeamWithPlayers)
+      this.teamPlayers.push(this.makePlayerForm());
+    if (this.displayAddPlayers)
+      this.players.push(this.makePlayerForm());
   }
 
   removePlayer(i) {
-    this.teamPlayers.removeAt(i);
+    if (this.displayAddTeamWithPlayers)
+      this.teamPlayers.removeAt(i);
+    if (this.displayAddPlayers)
+      this.players.removeAt(i);
   }
 
   addTeam() {
@@ -176,6 +203,30 @@ export class DashboardComponent implements OnInit {
         console.log('err', err);
         alert('updated failed');
       });
+  }
+
+  addPlayers() {
+    this.displayAddPlayers = false;
+
+    let players: Player[] = this.playersForm.value.players;
+    for (let i = 0; i < players.length; i++) {
+      players[i] = { ...players[i], teamId: this.currentTeamId };
+    }
+    this.playerService.addPlayers(players).subscribe(
+      res => {
+        let index = this.teams.findIndex(team => team.id === this.currentTeamId);
+        if (index > -1) this.teams[index].players = [ ...this.teams[index].players , ...res];
+        this.messageService.add({key: 'team', severity:'success', summary: 'Updated', detail: 'Successfully added players'});
+
+        //alert('success');
+        //onsole.log('res', res);
+      },
+      err => {
+        alert('error');
+        console.log('err', err);
+      }
+    )
+    console.log(players);
   }
 
   updatePlayer() {

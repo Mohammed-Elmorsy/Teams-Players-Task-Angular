@@ -20,6 +20,6 @@ export class TeamService {
   }
 
   addTeam(team: Team) {
-    return this.http.post(`${environment.baseURL}/teams/AddTeamWithPlayers`, team);
+    return this.http.post(`${environment.baseURL}/Teams/AddTeamWithPlayers`, team);
   }
 }
